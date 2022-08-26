@@ -52,8 +52,9 @@
       </el-form-item>
 
       <el-button
+        v-loading="loading"
+        element-loading-background="#0000006b"
         class="loginBtn"
-        :loading="loading"
         type="primary"
         style="width: 100%; margin-bottom: 30px"
         @click.native.prevent="handleLogin"
@@ -74,12 +75,14 @@ export default {
   name: 'Login',
   data() {
     const validatemobile = (rule, value, callback) => {
-      return validMobile(value) ? callback() : callback(new Error('请输入正确的手机号格式'))
+      return validMobile(value)
+        ? callback()
+        : callback(new Error('请输入正确的手机号格式'))
     }
     return {
       loginForm: {
-        mobile: 'admin',
-        password: '111111'
+        mobile: '13800000002',
+        password: '123456'
       },
       loginRules: {
         mobile: [
@@ -121,24 +124,18 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
-      this.$refs.loginForm.validate((valid) => {
-        if (valid) {
-          this.loading = true
-          this.$store
-            .dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/' })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
-          console.log('error submit!!')
-          return false
+    async handleLogin() {
+      this.loading = true
+      const res = await this.$refs.loginForm.validate()
+      if (res) {
+        try {
+          await this.$store.dispatch('user/getUserToken', this.loginForm)
+          this.$message.success('登录成功!')
+        } catch (err) {
+          console.log('err: ', err)
         }
-      })
+      }
+      this.loading = false
     }
   }
 }
@@ -153,6 +150,7 @@ $light_gray: #6fa7fe;
 $cursor: black;
 $placeholder: #889aa4;
 $input-color: #cce2ff;
+$btn-cg: #0000006b;
 
 .el-form-item__error {
   color: #ff0;
