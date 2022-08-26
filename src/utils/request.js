@@ -8,7 +8,9 @@ const service = axios.create({
 service.interceptors.request.use()
 service.interceptors.response.use(
   (response) => {
+    // ^ --- 解构数据
     const { success, message, data } = response.data
+    // ^ --- 根据文档的success属性判断数据是否发送成功
     if (success) {
       return data
     } else {
@@ -17,6 +19,7 @@ service.interceptors.response.use(
     }
   },
   (error) => {
+    // ^ --- 输出错误报告
     Message.error(error.message)
     return Promise.reject(error.message)
   }

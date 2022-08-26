@@ -36,6 +36,7 @@ module.exports = {
       warnings: false,
       errors: true
     },
+    // ^ --- 创建开发环境的反向代理
     proxy: {
       '/api': {
         target: 'http://ihrm.itheima.net/',
