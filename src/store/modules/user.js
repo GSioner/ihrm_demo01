@@ -32,12 +32,12 @@ export default {
     async getUserToken(action, data) {
       const res = await login(data)
       action.commit('GET_USER_TOKEN', res)
+      setTimeStamp(+new Date())
     },
     // ^ --- 获取用户信息/以及相应的员工信息
     async getUserInfo(action) {
       const res = await getInfo()
       const baseInfo = await getStaffInfo(res.userId)
-      setTimeStamp(+new Date())
       const baseRes = { ...res, ...baseInfo }
       action.commit('GET_USER_INFOMATION', baseRes)
       return baseRes

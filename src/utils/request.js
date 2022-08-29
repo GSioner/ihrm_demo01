@@ -1,14 +1,19 @@
 import axios from 'axios'
 import store from '@/store'
 import { Message } from 'element-ui'
+import { getTimeStamp } from '@/utils/auth.js'
+import router from '@/router'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
   timeout: 5000
 })
+const TimeOut = 7200
+
 service.interceptors.request.use(
   (request) => {
     if (store.getters.token) {
+      (Date.now() - getTimeStamp()) / 1000 > TimeOut ? isTimeOut() : ''
       request.headers.Authorization = `Bearer ${store.getters.token}`
     }
     return request
@@ -31,9 +36,18 @@ service.interceptors.response.use(
   },
   (error) => {
     // ^ --- 输出错误报告
-    Message.error(error.message)
-    return Promise.reject(error.message)
+    if (error.response && error.response.data.code === 10002) {
+      isTimeOut()
+    }
+    return Promise.reject('axios拦截器拦截报错', error.message)
   }
 )
+
+function isTimeOut() {
+  store.dispatch('user/logoout')
+  router.push('/login')
+  Message.error('权限超时，请重新登录!')
+  return Promise.reject(new Error('权限超时'))
+}
 
 export default service
