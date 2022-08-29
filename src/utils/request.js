@@ -1,11 +1,22 @@
 import axios from 'axios'
+import store from '@/store'
 import { Message } from 'element-ui'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
   timeout: 5000
 })
-service.interceptors.request.use()
+service.interceptors.request.use(
+  (request) => {
+    if (store.getters.token) {
+      request.headers.Authorization = `Bearer ${store.getters.token}`
+    }
+    return request
+  },
+  (error) => {
+    return Promise.reject(error)
+  }
+)
 service.interceptors.response.use(
   (response) => {
     // ^ --- 解构数据

@@ -131,6 +131,7 @@ export default {
         try {
           await this.$store.dispatch('user/getUserToken', this.loginForm)
           this.$message.success('登录成功!')
+          this.$router.push('/')
         } catch (err) {
           console.log('err: ', err)
         }
@@ -180,7 +181,6 @@ $btn-cg: #0000006b;
       caret-color: $cursor;
 
       &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
         -webkit-text-fill-color: $cursor !important;
       }
 

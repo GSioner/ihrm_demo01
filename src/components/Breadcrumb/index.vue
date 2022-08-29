@@ -33,7 +33,7 @@ export default {
       const first = matched[0]
 
       if (!this.isDashboard(first)) {
-        matched = [{ path: '/dashboard', meta: { title: 'Dashboard' }}].concat(matched)
+        matched = [{ path: '/dashboard', meta: { title: '江苏传智播客教育科技股份有限公司' }}].concat(matched)
       }
 
       this.levelList = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
@@ -71,8 +71,17 @@ export default {
   margin-left: 8px;
 
   .no-redirect {
-    color: #97a8be;
+    color: #fff;
     cursor: text;
+  }
+
+  .book-edition{
+    color: white;
+    padding: 5px;
+    background-color: #80aaff;
+    border-radius: 7px;
+    font-size: 10px;
+    margin-left: 10px;
   }
 }
 </style>
