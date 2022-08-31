@@ -11,5 +11,7 @@ module.exports = {
    * @type {boolean} true | false
    * @description Whether show the logo in sidebar
    */
-  sidebarLogo: true
+  sidebarLogo: true,
+  company: '江苏传智播客教育科技股份有限公司',
+  testVersion: true
 }

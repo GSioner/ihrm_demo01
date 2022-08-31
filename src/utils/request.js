@@ -36,7 +36,7 @@ service.interceptors.response.use(
   },
   (error) => {
     // ^ --- 输出错误报告
-    if (error.response && error.response.data.code === 10002) {
+    if (error.response && error.response.data && error.response.data.code === 10002) {
       isTimeOut()
     }
     return Promise.reject('axios拦截器拦截报错', error.message)

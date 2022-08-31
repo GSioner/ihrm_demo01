@@ -8,8 +8,8 @@
 
     <!-- <breadcrumb class="breadcrumb-container" /> -->
     <div class="app-breadcrumb">
-      江苏传智播客教育科技股份有限公司
-      <span class="breadBtn">体验版</span>
+      {{ setting.company }}
+      <span v-if="setting.testVersion" class="breadBtn">体验版</span>
     </div>
 
     <div class="right-menu">
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import setting from '@/settings.js'
 import { getInfo } from '@/api/user.js'
 import { mapGetters } from 'vuex'
 // import Breadcrumb from '@/components/Breadcrumb'
@@ -53,7 +54,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['sidebar', 'name', 'userImg'])
+    ...mapGetters(['sidebar', 'name', 'userImg']),
+    setting() {
+      return setting
+    }
   },
   async created() {
     const res = await getInfo()
@@ -170,7 +174,6 @@ $color: white;
           width: 40px;
           height: 40px;
           border-radius: 10px;
-
         }
 
         .el-icon-caret-bottom {
