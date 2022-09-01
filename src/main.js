@@ -15,6 +15,8 @@ import router from './router'
 import '@/icons' // icon
 import '@/permission' // permission control
 
+import 'element-ui/lib/theme-chalk/display.css'
+
 // ^ --- 批量注册自定义指令
 import * as customCode from '@/directives'
 Object.keys(customCode).forEach(key => {

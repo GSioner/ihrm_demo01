@@ -60,8 +60,7 @@ export default {
     }
   },
   async created() {
-    const res = await getInfo()
-    console.log('res: ', res)
+    await getInfo()
   },
   methods: {
     toggleSideBar() {
