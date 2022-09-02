@@ -68,6 +68,7 @@
     <el-dialog
       :title="type === 'add' ? '新增部门' : '编辑部门'"
       :visible.sync="addEditDialog"
+      @close="onCancel"
     >
       <el-form ref="ruleForm" :model="form" :rules="rules">
         <!-- 部门名称 -->
@@ -94,7 +95,11 @@
           :label-width="formLabelWidth"
           prop="manager"
         >
-          <el-select v-model="form.manager" placeholder="请选择负责人" @focus="getCompanyUsername">
+          <el-select
+            v-model="form.manager"
+            placeholder="请选择负责人"
+            @focus="getCompanyUsername"
+          >
             <el-option
               v-for="k in companyUsername"
               :key="k.id"
@@ -108,10 +113,10 @@
         <el-form-item
           label="部门介绍"
           :label-width="formLabelWidth"
-          prop="textarea"
+          prop="introduce"
         >
           <el-input
-            v-model="form.textarea"
+            v-model="form.introduce"
             type="textarea"
             :rows="5"
             placeholder="1-300个字符"
@@ -132,9 +137,9 @@ import {
   getCompanyUsername,
   addCompanyDeparts,
   editCompanyDeparts,
-  getCompanyDeparts
+  getCompanyDeparts,
+  getCompanyInfo
 } from '@/api/company.js'
-import dayjs from 'dayjs'
 export default {
   name: 'CompanyTree',
   props: {
@@ -152,7 +157,7 @@ export default {
       form: {
         name: '',
         manager: '',
-        textarea: '',
+        introduce: '',
         code: ''
       },
       formLabelWidth: '100px',
@@ -173,7 +178,7 @@ export default {
         manager: [
           { required: true, trigger: 'change', message: '请输入负责人信息' }
         ],
-        textarea: [
+        introduce: [
           { required: true, trigger: 'blur', message: '请输入部门介绍' },
           {
             min: 1,
@@ -214,13 +219,15 @@ export default {
       i === -1 ? callback() : callback(new Error('当前编码已被占用'))
     },
     // ^--- 判断点击的类型
-    handleCommand(command) {
+    async handleCommand(command) {
       if (command === 'del') {
         this.deleteDialog = true
       } else if (command === 'add') {
         this.addEditDialog = true
         this.type = 'add'
       } else if (command === 'edit') {
+        const data = await getCompanyInfo(this.data.id)
+        this.form = { ...data }
         this.addEditDialog = true
         this.type = 'edit'
       }
@@ -249,38 +256,54 @@ export default {
     },
     // ^--- 新增部门/编辑部门 --- 弹出框
     async addDepartsData() {
-      const data = {
-        code: this.form.code,
-        introduce: this.form.textarea,
-        manager: this.form.manager,
-        name: this.form.name,
-        pid: this.data.id || ''
-      }
+      await this.submitForm('ruleForm')
+
       // *--- 判断是否为新增部门
+      const data = this.getFormData()
       if (this.type === 'add') {
         const res = await addCompanyDeparts(data)
         this.id = res._id
         this.addAndEditCodeFn()
       }
+
       // *--- 判断是否为编辑部门
       if (this.type === 'edit') {
-        data.id = this.id || this.data.id
-        data.pid = this.data.pid || ''
-        data.createTime = dayjs().format('YYYY-MM-DD HH:mm:ss')
         await editCompanyDeparts(data, data.pid)
         this.addAndEditCodeFn()
+      }
+    },
+    // ^--- 获取表单数据
+    getFormData() {
+      return {
+        ...this.form,
+        pid: this.data.id || ''
       }
     },
     // ^--- 相同代码封装
     addAndEditCodeFn() {
       this.$emit('reRander')
       this.addEditDialog = false
+    },
+    // ^--- 手动校验
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          console.log('验证成功')
+        } else {
+          return false
+        }
+      })
+    },
+    // ^--- 取消事件
+    onCancel() {
+      this.$refs.ruleForm.resetFields()
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+// ^--- 定制样式
 .tree_main {
   box-sizing: border-box;
   width: 100%;
@@ -291,9 +314,6 @@ export default {
 }
 .el-icon-arrow-down {
   font-size: 12px;
-}
-.row-bg {
-  padding: 10px 0;
 }
 ::v-deep .el-dialog__header {
   background-color: #66b1ff;

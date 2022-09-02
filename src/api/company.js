@@ -34,3 +34,9 @@ export const editCompanyDeparts = (data, id) => {
     data
   })
 }
+
+export const getCompanyInfo = id => {
+  return request({
+    url: `/company/department/${id}`
+  })
+}

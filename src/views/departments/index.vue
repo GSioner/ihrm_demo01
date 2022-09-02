@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-container">
+  <div v-loading="loading" class="dashboard-container">
     <div class="app-container">
       <!-- ↓组织架构头部内容↓ -->
       <el-card style="padding: 30px 140px">
@@ -44,7 +44,8 @@ export default {
       defaultProps: {
         label: 'name',
         children: 'children'
-      }
+      },
+      loading: false
     }
   },
   async created() {
@@ -66,14 +67,15 @@ export default {
       this.departsList = getClone(res.depts, '')
     },
     // ^--- 重渲染
-    reRander() {
+    async reRander() {
       console.log('数据刷新中')
-      this.getDepartsData()
+      this.loading = true
+      await this.getDepartsData()
       this.rander = false
       setTimeout(() => {
         this.rander = true
       }, 0)
-      this.$message.success('数据更新成功')
+      this.loading = false
     }
   }
 }
