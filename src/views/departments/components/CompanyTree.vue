@@ -68,6 +68,7 @@
     <el-dialog
       :title="type === 'add' ? '新增部门' : '编辑部门'"
       :visible.sync="addEditDialog"
+      :destroy-on-close="true"
       @close="onCancel"
     >
       <el-form ref="ruleForm" :model="form" :rules="rules">
@@ -124,7 +125,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="addEditDialog = false">取 消</el-button>
+        <el-button @click="onCancel">取 消</el-button>
         <el-button type="primary" @click="addDepartsData">确 定</el-button>
       </div>
     </el-dialog>
@@ -207,16 +208,32 @@ export default {
     // ^--- 验证部门名称是否重复
     async verityName(rule, value, callback) {
       const { depts: res } = await getCompanyDeparts()
-      const arr = res.filter((item) =>
-        item.pid === this.data.id ? item.name === value : false
-      )
-      !arr.length ? callback() : callback(new Error('当前已存在该部门'))
+      let isTrue = null
+      if (this.type === 'add') {
+        const arr = res.filter((item) =>
+          item.pid === this.data.id ? item.name === value : false
+        )
+        isTrue = arr.length
+      } else if (this.type === 'edit') {
+        isTrue = res.filter(
+          (item) => item.id !== this.data.id && item.pid === this.data.pid
+        ).some(item => item.name === value)
+      }
+      isTrue ? callback(new Error('当前已存在该部门')) : callback()
     },
     // ^--- 验证部门编码是否重复
     async verityCode(rule, value, callback) {
       const { depts: res } = await getCompanyDeparts()
-      const i = res.findIndex((item) => item.code === value && value)
-      i === -1 ? callback() : callback(new Error('当前编码已被占用'))
+      let isTrue = null
+      if (this.type === 'add') {
+        const arr = res.filter((item) => item.code === value && value)
+        isTrue = arr.length
+      } else if (this.type === 'edit') {
+        isTrue = res
+          .filter((item) => item.id !== this.data.id)
+          .some((item) => item.code === value)
+      }
+      isTrue ? callback(new Error('当前编码已被占用')) : callback()
     },
     // ^--- 判断点击的类型
     async handleCommand(command) {
@@ -268,7 +285,7 @@ export default {
 
       // *--- 判断是否为编辑部门
       if (this.type === 'edit') {
-        await editCompanyDeparts(data, data.pid)
+        await editCompanyDeparts(data)
         this.addAndEditCodeFn()
       }
     },
@@ -296,7 +313,13 @@ export default {
     },
     // ^--- 取消事件
     onCancel() {
-      this.$refs.ruleForm.resetFields()
+      this.form = {
+        name: '',
+        manager: '',
+        introduce: '',
+        code: ''
+      }
+      this.addEditDialog = false
     }
   }
 }
@@ -320,5 +343,8 @@ export default {
 }
 ::v-deep .el-dialog__body {
   padding-right: 200px;
+}
+::v-deep .el-form-item__error {
+  color: red !important;
 }
 </style>

@@ -55,7 +55,6 @@ export default {
     // ^--- 编译组织树状结构
     async getDepartsData() {
       const res = await getCompanyDeparts()
-      console.log('res: ', res)
       this.company = {
         name: res.companyName,
         manager: '负责人',
