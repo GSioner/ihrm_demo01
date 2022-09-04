@@ -2,7 +2,11 @@
   <div class="role">
     <!-- 新增角色按钮 -->
     <div class="addBtn">
-      <el-button type="primary" size="small">新增角色</el-button>
+      <el-button
+        type="primary"
+        size="small"
+        @click="addBtn('add')"
+      >新增角色</el-button>
     </div>
 
     <!-- 角色表格 -->
@@ -61,12 +65,22 @@
 </template>
 
 <script>
-import { getRole, getPermission, getRoleInfo } from '@/api/setting.js'
+import {
+  getRole,
+  getPermission,
+  getRoleInfo,
+  deleteRole
+} from '@/api/setting.js'
 import getClone from '@/utils/deep-clone.js'
 export default {
   props: {
     show: {
-      type: Boolean
+      type: Boolean,
+      default: false
+    },
+    roleShow: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -76,29 +90,27 @@ export default {
       pagesize: 10
     }
   },
-  computed: {
-    promissionShow: {
-      set() {},
-      get() {
-        return this.show
-      }
-    }
-  },
   created() {
     this.getRoleInfo()
   },
   methods: {
+    // ^--- 权限分配弹窗
     async promissionBtn(index, row) {
-      console.log(index, row)
-      // ^--- 将自定义函数返回Promise.resolve,防止返回数据变为[[Promise]]数据格式
+      // *--- 将自定义函数返回Promise.resolve,防止返回数据变为[[Promise]]数据格式
       const data = await this.getRolePermission(row.id)
       this.$emit('changeShow', !this.show, row, data)
     },
+    // ^--- 编辑角色弹窗
     editBtn(index, row) {
-      console.log(index, row)
+      this.$emit('sendRoleInfo', !this.roleShow, row)
     },
+    // ^--- 删除角色弹窗
     deleteBtn(index, row) {
-      console.log(index, row)
+      this.deleteDialog(row.id)
+    },
+    // ^--- 新增角色弹窗
+    addBtn(btn) {
+      this.$emit('sendRoleInfo', !this.roleShow, btn)
     },
     // ^--- 展示表格序号
     indexMethod(index) {
@@ -134,6 +146,22 @@ export default {
         arr,
         base
       })
+    },
+    // ^--- 删除权限角色弹窗
+    deleteDialog(id) {
+      this.$confirm('此操作将永久删除该权限角色信息，是否继续？', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async() => {
+          await deleteRole(id)
+          this.$emit('reRander')
+          this.$message.success('删除成功')
+        })
+        .catch(() => {
+          this.$message.info('已取消删除')
+        })
     }
   }
 }

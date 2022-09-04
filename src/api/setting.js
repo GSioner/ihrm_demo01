@@ -46,3 +46,29 @@ export const setRolePermission = data => {
     data
   })
 }
+
+// 修改角色名称/描述
+export const editRoleInfo = (data, id) => {
+  return request({
+    url: `/sys/role/${id}`,
+    method: 'PUT',
+    data
+  })
+}
+
+// 删除角色
+export const deleteRole = id => {
+  return request({
+    url: `/sys/role/${id}`,
+    method: 'DELETE'
+  })
+}
+
+// 新增角色
+export const addNewRole = data => {
+  return request({
+    url: '/sys/role',
+    method: 'POST',
+    data
+  })
+}
