@@ -80,13 +80,10 @@ export default {
     },
     // ^--- 监听点击权限项
     async handleNodeClick({ id }) {
-      console.log('data: ', id)
       // *--- 验证当前权限列表是否存在该id权限
-      console.log('realPermission: ', this.realPermission)
       const i = this.realPermission.findIndex((item) => {
         return item === id
       })
-      console.log('i: ', i)
       if (i === -1) {
         this.realPermission.push(id)
       } else {
@@ -99,7 +96,6 @@ export default {
       this.showList = this.permissionList.arr
       this.id = this.rowData.id
       const { permIds: info } = await getRoleInfo(this.id)
-      console.log('info: ', info)
       this.realPermission = info
     },
     // ^--- 提交权限修改

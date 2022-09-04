@@ -90,6 +90,7 @@ export default {
   methods: {
     async promissionBtn(index, row) {
       console.log(index, row)
+      // ^--- 将自定义函数返回Promise.resolve,防止返回数据变为[[Promise]]数据格式
       const data = await this.getRolePermission(row.id)
       this.$emit('changeShow', !this.show, row, data)
     },
@@ -115,12 +116,16 @@ export default {
     // ^--- 获取员工权限/权限列表
     async getRolePermission(id) {
       const arr = []
+      // *--- 遍历原始数据，添加一个新的属性perid作为树状控件的默认展示属性
       const res = await getPermission()
       res.forEach((item, index) => {
         item.perid = index
       })
+      // *--- 将扁平数据树状化
       const base = getClone(res, '0')
+      // *--- 获取权限列表
       const { permIds: info } = await getRoleInfo(id)
+      // *--- 遍历权限列表，将已存在的权限记录perid至展示权限列表
       res.forEach((outer) => {
         const i = info.findIndex((inner) => inner === outer.id)
         i !== -1 ? arr.push(outer.perid) : ''
