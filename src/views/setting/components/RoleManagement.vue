@@ -116,13 +116,14 @@ export default {
     async getRolePermission(id) {
       const arr = []
       const res = await getPermission()
+      res.forEach((item, index) => {
+        item.perid = index
+      })
       const base = getClone(res, '0')
       const { permIds: info } = await getRoleInfo(id)
-      console.log('info: ', info)
-      base.forEach((outer, index) => {
-        outer.perid = index
+      res.forEach((outer) => {
         const i = info.findIndex((inner) => inner === outer.id)
-        i !== -1 ? arr.push(i) : ''
+        i !== -1 ? arr.push(outer.perid) : ''
       })
       return Promise.resolve({
         arr,

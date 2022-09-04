@@ -15,14 +15,15 @@
 
       <!-- 确认按钮 -->
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="changeShow">确 定</el-button>
-        <el-button @click="changeShow">取 消</el-button>
+        <el-button type="primary" @click="changeShow(1)">确 定</el-button>
+        <el-button @click="changeShow(0)">取 消</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { setRolePermission, getRoleInfo } from '@/api/setting.js'
 export default {
   props: {
     show: {
@@ -50,7 +51,9 @@ export default {
         label: 'name'
       },
       showList: [],
-      showDialog: true
+      showDialog: true,
+      id: '',
+      realPermission: []
     }
   },
   computed: {
@@ -62,22 +65,60 @@ export default {
     }
   },
   watch: {
+    // ^--- 监听dialog组件显隐触发数据铺设
     promissionShow() {
       this.randerData()
-      console.log('showList', this.showList)
-      console.log('perList', this.perList)
     }
   },
   methods: {
-    changeShow() {
+    // ^--- 切换dialog显隐
+    changeShow(bool) {
+      if (bool) {
+        this.sendRolePermission()
+      }
       this.$emit('changeShow', !this.show)
     },
-    handleNodeClick(data) {
-      console.log('data', data)
+    // ^--- 监听点击权限项
+    async handleNodeClick({ id }) {
+      console.log('data: ', id)
+      // *--- 验证当前权限列表是否存在该id权限
+      console.log('realPermission: ', this.realPermission)
+      const i = this.realPermission.findIndex((item) => {
+        return item === id
+      })
+      console.log('i: ', i)
+      if (i === -1) {
+        this.realPermission.push(id)
+      } else {
+        this.realPermission.splice(i, 1)
+      }
     },
-    randerData() {
+    // ^--- 权限数据铺设dialog模块
+    async randerData() {
       this.perList = this.permissionList.base
       this.showList = this.permissionList.arr
+      this.id = this.rowData.id
+      const { permIds: info } = await getRoleInfo(this.id)
+      console.log('info: ', info)
+      this.realPermission = info
+    },
+    // ^--- 提交权限修改
+    async sendRolePermission() {
+      const data = {
+        id: this.id,
+        permIds: this.realPermission
+      }
+      await setRolePermission(data)
+      this.$message.success('权限修改成功')
+    },
+    // ^---数据清理
+    clearData(arr) {
+      arr.forEach((item) => {
+        const i = arr.findIndex((item) => typeof item === 'number')
+        if (i !== -1) {
+          arr.splice(i, 1)
+        }
+      })
     }
   }
 }
