@@ -23,5 +23,3 @@ export const getStaffInfo = data => {
     url: `/sys/user/${data}`
   })
 }
-
-export const logout = (data) => {}

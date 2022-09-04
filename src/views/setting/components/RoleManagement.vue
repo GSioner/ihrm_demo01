@@ -86,8 +86,10 @@ export default {
   data() {
     return {
       tableData: [],
-      page: 1,
-      pagesize: 10
+      page: {
+        page: 1,
+        pagesize: 10
+      }
     }
   },
   created() {
@@ -118,11 +120,7 @@ export default {
     },
     // ^--- 请求员工信息数据
     async getRoleInfo() {
-      const data = {
-        page: this.page,
-        pagesize: this.pagesize
-      }
-      const res = await getRole(data)
+      const res = await getRole(this.page)
       this.tableData = res.rows
     },
     // ^--- 获取员工权限/权限列表

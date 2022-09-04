@@ -23,6 +23,8 @@ Object.keys(customCode).forEach(key => {
   Vue.directive(key, customCode[key])
 })
 
+import Components from '@/components'
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -40,6 +42,7 @@ Object.keys(customCode).forEach(key => {
 // Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 Vue.use(ElementUI)
+Vue.use(Components)
 
 Vue.config.productionTip = false
 

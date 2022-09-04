@@ -8,10 +8,10 @@ export const getCompanyInfoSetting = () => {
 }
 
 // 获取员工信息
-export const getRole = (data) => {
+export const getRole = (params) => {
   return request({
     url: '/sys/role',
-    data
+    params
   })
 }
 
