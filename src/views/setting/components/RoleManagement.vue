@@ -59,7 +59,13 @@
 
     <!-- 分页模块 -->
     <div class="page">
-      <el-pagination layout="prev, pager, next" :total="1" />
+      <el-pagination
+        layout="prev, pager, next"
+        :total="page.total"
+        :page-size="page.pagesize"
+        :current-page.sync="page.page"
+        @current-change="handleCurrentChange"
+      />
     </div>
   </div>
 </template>
@@ -88,7 +94,8 @@ export default {
       tableData: [],
       page: {
         page: 1,
-        pagesize: 10
+        pagesize: 10,
+        total: 10
       }
     }
   },
@@ -121,7 +128,13 @@ export default {
     // ^--- 请求员工信息数据
     async getRoleInfo() {
       const res = await getRole(this.page)
+      this.total = res.total
       this.tableData = res.rows
+    },
+    // ^--- 切换分页
+    handleCurrentChange(num) {
+      this.page.page = num
+      this.getRoleInfo()
     },
     // ^--- 获取员工权限/权限列表
     async getRolePermission(id) {
