@@ -59,6 +59,7 @@
 
     <!-- 分页模块 -->
     <div class="page">
+      <span class="demonstration">共 {{ page.page }} 条</span>
       <el-pagination
         layout="prev, pager, next"
         :total="page.total"
@@ -95,7 +96,7 @@ export default {
       page: {
         page: 1,
         pagesize: 10,
-        total: 10
+        total: 0
       }
     }
   },
@@ -194,7 +195,13 @@ export default {
   .page {
     display: flex;
     justify-content: flex-end;
+    align-items: center;
     height: 60px;
+  }
+
+  .demonstration{
+    color: #767676;
+    font-size: 14px;
   }
 }
 </style>

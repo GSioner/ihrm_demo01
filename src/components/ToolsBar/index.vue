@@ -55,7 +55,7 @@ $info-font-size: 16px;
   .el-alert__icon {
     color: $info-icon-color;
   }
-  .el-alert__title{
+  .el-alert__title {
     font-size: $info-font-size;
   }
 }
