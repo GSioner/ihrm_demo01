@@ -112,7 +112,7 @@ export default {
     return {
       tableData: [],
       page: {
-        page: 1,
+        page: localStorage.getItem('page') || 1,
         size: 10,
         total: 10
       },
@@ -155,6 +155,7 @@ export default {
     handleCurrentChange(num) {
       this.page.page = num
       this.getStaffInfo()
+      localStorage.setItem('page', num)
     },
     // ^--- 时间格式转换
     timeFormData(arr) {
