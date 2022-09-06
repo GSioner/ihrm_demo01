@@ -14,3 +14,12 @@ export const deleteStaffInfo = id => {
     url: `/sys/user/${id}`
   })
 }
+
+// ^--- 新增员工
+export const addNewStaffInfo = data => {
+  return request({
+    url: '/sys/user',
+    method: 'POST',
+    data
+  })
+}

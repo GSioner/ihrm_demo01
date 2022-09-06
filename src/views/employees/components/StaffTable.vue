@@ -3,14 +3,21 @@
     <el-card>
       <!-- 表格模块 -->
       <el-table :data="tableData" border style="width: 100%">
-        <el-table-column align="center" type="index" label="序号" width="80" />
-        <el-table-column prop="username" label="姓名" width="160" />
+        <el-table-column
+          align="center"
+          type="index"
+          label="序号"
+          width="80"
+          sortable
+        />
+        <el-table-column prop="username" label="姓名" width="160" sortable />
 
         <!-- 头像 -->
         <el-table-column align="center" label="头像" min-width>
           <template slot-scope="scope">
             <img
               v-if="scope.row.staffPhoto"
+              v-imgerror="staffPhoto"
               :src="scope.row.staffPhoto"
               class="img"
             >
@@ -18,21 +25,36 @@
           </template>
         </el-table-column>
 
-        <el-table-column prop="mobile" label="手机号" min-width />
-        <el-table-column prop="workNumber" label="工号" min-width />
+        <el-table-column prop="mobile" label="手机号" min-width sortable />
+        <el-table-column prop="workNumber" label="工号" min-width sortable />
 
         <!-- 聘用形式 -->
-        <el-table-column prop="formOfEmployment" label="聘用形式" min-width>
+        <el-table-column
+          prop="formOfEmployment"
+          label="聘用形式"
+          min-width
+          sortable
+        >
           <template slot-scope="scope">
             {{ scope.row.formOfEmployment === 1 ? '正式' : '非正式' }}
           </template>
         </el-table-column>
 
-        <el-table-column prop="departmentName" label="部门" min-width />
-        <el-table-column prop="timeOfEntry" label="入职时间" min-width />
+        <el-table-column
+          prop="departmentName"
+          label="部门"
+          min-width
+          sortable
+        />
+        <el-table-column
+          prop="timeOfEntry"
+          label="入职时间"
+          min-width
+          sortable
+        />
 
         <!-- 状态 -->
-        <el-table-column prop="timeOfEntry" label="状态" min-width>
+        <el-table-column prop="timeOfEntry" label="状态" min-width sortable>
           <el-switch disabled />
         </el-table-column>
 
@@ -88,12 +110,7 @@ import { getStaffInfo, deleteStaffInfo } from '@/api/employees.js'
 export default {
   data() {
     return {
-      tableData: [
-        {
-          date: '2016-05-02',
-          username: '王小虎'
-        }
-      ],
+      tableData: [],
       page: {
         page: 1,
         size: 10,
@@ -127,6 +144,7 @@ export default {
     // ^--- 获取员工数据列表
     async getStaffInfo() {
       const res = await getStaffInfo(this.page)
+      console.log('res: ', res)
       this.page.total = res.total
       this.timeFormData(res.rows)
       this.tableData = res.rows
