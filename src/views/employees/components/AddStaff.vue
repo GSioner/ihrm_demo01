@@ -51,6 +51,14 @@
           v-model="form.departmentName"
           class="input"
           placeholder="请选择部门"
+          @click.native="showTree"
+        />
+        <el-tree
+          v-if="tree"
+          :data="data"
+          :props="defaultProps"
+          :default-expand-all="true"
+          @node-click="handleNodeClick"
         />
       </el-form-item>
 
@@ -74,6 +82,8 @@
 
 <script>
 import { addNewStaffInfo } from '@/api/employees.js'
+import { getCompanyDeparts } from '@/api/company.js'
+import getClone from '@/utils/deep-clone.js'
 import dayjs from 'dayjs'
 export default {
   props: {
@@ -84,6 +94,7 @@ export default {
   },
   data() {
     return {
+      tree: false,
       dialogFormVisible: false,
       form: {
         username: '',
@@ -114,11 +125,17 @@ export default {
           { required: true, trigger: 'blur', message: '请输入工号' }
         ],
         departmentName: [
-          { required: true, trigger: 'blur', message: '请输入部门名称' }
+          { required: true, trigger: 'change', message: '请输入部门名称' },
+          { validator: this.validateCompany, trigger: 'change' }
         ],
         timeOfEntry: [
           { required: true, trigger: 'blur', message: '请输入入职时间' }
         ]
+      },
+      data: [],
+      defaultProps: {
+        children: 'children',
+        label: 'name'
       }
     }
   },
@@ -126,6 +143,9 @@ export default {
     show() {
       this.dialogFormVisible = this.show
     }
+  },
+  created() {
+    this.getCompanyDeparts()
   },
   methods: {
     // ^---判断是确定按钮还是取消按钮
@@ -148,14 +168,33 @@ export default {
     // ^---编译数据为请求规范格式数据
     editData(data) {
       // TODO:转换日期为'YYYY-MM-DD'格式
-      data.correctionTime = dayjs(data.correctionTime).form(
-        'YYYY-MM-DD'
-      )
+      data.correctionTime = dayjs(data.correctionTime).form('YYYY-MM-DD')
       data.timeOfEntry = dayjs(data.timeOfEntry).form('YYYY-MM-DD')
       // TODO:转换字符串为数字类型
       data.formOfEmployment = +data.formOfEmployment
       data.mobile = +data.mobile
       data.workNumber = +data.workNumber
+    },
+    // ^---获取部门信息树
+    async getCompanyDeparts() {
+      const { depts } = await getCompanyDeparts()
+      this.data = getClone(depts, '')
+    },
+    // ^---点击获取部门信息
+    handleNodeClick(data) {
+      this.form.departmentName = data.name
+      this.tree = false
+    },
+    // ^---部门数据展示
+    showTree() {
+      this.getCompanyDeparts()
+      this.tree = true
+    },
+    // ^---部门验证
+    async validateCompany(rule, value, callback) {
+      const { depts } = await getCompanyDeparts()
+      const bool = depts.some((item) => item.name === value)
+      bool ? callback() : callback(new Error('请选择正确的部门名称!'))
     }
   }
 }

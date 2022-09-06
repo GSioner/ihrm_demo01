@@ -1,8 +1,9 @@
 <template>
   <div id="staff">
-    <el-card>
+    <el-card v-if="rander">
       <!-- 表格模块 -->
       <el-table :data="tableData" border style="width: 100%">
+        <!-- 序号 -->
         <el-table-column
           align="center"
           type="index"
@@ -34,28 +35,31 @@
           label="聘用形式"
           min-width
           sortable
-        >
-          <template slot-scope="scope">
-            {{ scope.row.formOfEmployment === 1 ? '正式' : '非正式' }}
-          </template>
-        </el-table-column>
+          :formatter="formatFormOfEmployment"
+        />
 
+        <!-- 部门 -->
         <el-table-column
           prop="departmentName"
           label="部门"
           min-width
           sortable
         />
+
+        <!-- 入职时间 -->
         <el-table-column
           prop="timeOfEntry"
           label="入职时间"
           min-width
           sortable
+          :formatter="formatTimeOfEntry"
         />
 
         <!-- 状态 -->
-        <el-table-column prop="timeOfEntry" label="状态" min-width sortable>
-          <el-switch disabled />
+        <el-table-column prop="enableState" label="状态" min-width sortable>
+          <template slot-scope="scope">
+            <el-switch v-model="scope.row.enableState" disabled />
+          </template>
         </el-table-column>
 
         <!-- 操作面板 -->
@@ -105,18 +109,19 @@
 </template>
 
 <script>
-import dayjs from 'dayjs'
+import enumeration from '@/api/employees/enumeration.js'
 import { getStaffInfo, deleteStaffInfo } from '@/api/employees.js'
 export default {
   data() {
     return {
       tableData: [],
       page: {
-        page: localStorage.getItem('page') || 1,
+        page: +localStorage.getItem('page') || 1,
         size: 10,
         total: 10
       },
-      staffPhoto: require('@/assets/common/head.jpg')
+      staffPhoto: require('@/assets/common/head.jpg'),
+      rander: true
     }
   },
   created() {
@@ -124,27 +129,23 @@ export default {
   },
   methods: {
     // ^--- 获取点击的操作类型数据
-    handleClick(row, type) {
+    async handleClick(row, type) {
       console.log(row, type)
       if (type === 'delete') {
-        this.$confirm('确认删除该用户？', '', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(async() => {
-            await deleteStaffInfo(row.id)
-            this.$message.success('删除成功！')
-          })
-          .catch(() => {
-            this.$message.info('已取消删除')
-          })
+        // TODO:删除数据
+        try {
+          await this.$confirm('确认删除该用户？')
+          await deleteStaffInfo(row.id)
+          this.$message.success('删除成功！')
+          this.reRander()
+        } catch (err) {
+          this.$message.info('已取消删除')
+        }
       }
     },
     // ^--- 获取员工数据列表
     async getStaffInfo() {
       const res = await getStaffInfo(this.page)
-      console.log('res: ', res)
       this.page.total = res.total
       this.timeFormData(res.rows)
       this.tableData = res.rows
@@ -157,11 +158,27 @@ export default {
       this.getStaffInfo()
       localStorage.setItem('page', num)
     },
-    // ^--- 时间格式转换
+    // ^--- 数据格式转换
     timeFormData(arr) {
       arr.forEach((item) => {
-        item.timeOfEntry = dayjs(item.timeOfEntry).format('YYYY-MM-DD')
+        item.enableState = item.enableState === 1
       })
+    },
+    // ^---数据重渲染
+    reRander() {
+      this.rander = false
+      setTimeout(() => (this.rander = true), 0)
+    },
+    // ^---聘请情况格式化
+    formatFormOfEmployment(row, column, cellValue, index) {
+      const data = enumeration.formOfEmployment.find(
+        (item) => item.id === cellValue
+      )
+      return data ? data.name : '未知'
+    },
+    // ^---时间格式转换
+    formatTimeOfEntry(row, column, cellValue, index) {
+      return enumeration.timeOfEntry(cellValue)
     }
   }
 }
