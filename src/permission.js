@@ -3,7 +3,7 @@ import store from '@/store'
 import Nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
 
-const wihteList = ['/login']
+const wihteList = ['/login', '/import', '/404']
 // ^ --- next勾子参数，next() => 放行；next(false) => 终止放行；next(地址) => 跳转其他地址
 router.beforeEach(async(to, from, next) => {
   // console.log('to', to)

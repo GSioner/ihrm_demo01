@@ -130,7 +130,6 @@ export default {
   methods: {
     // ^--- 获取点击的操作类型数据
     async handleClick(row, type) {
-      console.log(row, type)
       if (type === 'delete') {
         // TODO:删除数据
         try {
@@ -141,6 +140,10 @@ export default {
         } catch (err) {
           this.$message.info('已取消删除')
         }
+      } else if (type === 'check') {
+        // TODO:查看员工详细数据
+        this.$router.push(`/employees/detail/${row.id}`)
+        localStorage.setItem('staffImg', row.staffPhoto)
       }
     },
     // ^--- 获取员工数据列表
@@ -148,6 +151,7 @@ export default {
       const res = await getStaffInfo(this.page)
       this.page.total = res.total
       this.timeFormData(res.rows)
+      this.$emit('update:tableData', res.rows)
       this.tableData = res.rows
       const txt = `共 ${res.total} 条数据`
       this.$emit('update:txt', txt)

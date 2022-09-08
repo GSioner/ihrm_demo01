@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import RouterMarkDown from './RouterMarkDown.js'
 export default {
   data() {
     return {
@@ -46,52 +47,20 @@ export default {
           this.tags = [...this.tags, ...this.editData(path)]
           i = this.tags.findIndex((item) => item.path === path)
         }
-        this.tagName = this.tags[i].name
+        if (i !== -1) this.tagName = this.tags[i].name
       }
     }
   },
   created() {
     this.tags = this.editData(this.$route.path)
     this.tags.forEach((item) => {
-      if (item.path === this.path) this.tagName = item.name
+      if (item.path === this.$route.path) this.tagName = item.name
     })
   },
   methods: {
     // ^---编译数据,方便后续使用
     editData(path) {
-      const arr = []
-      let name = null
-      switch (path) {
-        case '/dashboard':
-          name = '首页'
-          break
-        case '/approvals':
-          name = '审批'
-          break
-        case '/attendances':
-          name = '考勤'
-          break
-        case '/departments':
-          name = '组织架构'
-          break
-        case '/employees':
-          name = '员工管理'
-          break
-        case '/permission':
-          name = '权限管理'
-          break
-        case '/salarys':
-          name = '工资'
-          break
-        case '/setting':
-          name = '公司设置'
-          break
-        case '/social':
-          name = '社保'
-          break
-      }
-      arr.push({ name, path })
-      return arr
+      return RouterMarkDown.filter((item) => item.path === path)
     },
     // ^---获取点击tag数据
     handlerClick(data) {
@@ -107,22 +76,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$text-color: #495060;
-$background-color: #fff;
-$border-color: #d8dce5;
-
 ::v-deep .el-tag {
   margin: 0 2px;
   border-radius: 0;
-  border: 1px solid $border-color;
-  background-color: $background-color;
-  color: $text-color;
+  border: 1px solid #d8dce5;
+  background-color: #fff;
+  color: #495060;
 }
 ::v-deep .el-card__body {
   padding: 2px 10px;
 }
 ::v-deep .el-tag--dark .el-tag__close {
-  color: $text-color;
+  color: #495060;
 }
 .active {
   background-color: #409eff;
