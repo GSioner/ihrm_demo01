@@ -14,15 +14,13 @@
         <el-table-column prop="username" label="姓名" width="160" sortable />
 
         <!-- 头像 -->
-        <el-table-column align="center" label="头像" min-width>
+        <el-table-column
+          align="center"
+          label="头像"
+          min-width
+        >
           <template slot-scope="scope">
-            <img
-              v-if="scope.row.staffPhoto"
-              v-imgerror="staffPhoto"
-              :src="scope.row.staffPhoto"
-              class="img"
-            >
-            <img v-else :src="staffPhoto" class="img">
+            <img v-imgerror="errImg" :src="scope.row.staffPhoto" class="img" @click="showQrCode(scope.row.staffPhoto)">
           </template>
         </el-table-column>
 
@@ -105,12 +103,20 @@
         />
       </div>
     </el-card>
+
+    <!-- 二维码弹窗 -->
+    <el-dialog :visible.sync="qecodeShow" title="二维码">
+      <el-row type="flex" justify="center">
+        <canvas ref="myQrCode" />
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import enumeration from '@/api/employees/enumeration.js'
 import { getStaffInfo, deleteStaffInfo } from '@/api/employees.js'
+import QrCode from 'qrcode'
 export default {
   data() {
     return {
@@ -120,8 +126,9 @@ export default {
         size: 10,
         total: 10
       },
-      staffPhoto: require('@/assets/common/head.jpg'),
-      rander: true
+      errImg: require('@/assets/common/head.jpg'),
+      rander: true,
+      qecodeShow: false
     }
   },
   created() {
@@ -151,10 +158,10 @@ export default {
       const res = await getStaffInfo(this.page)
       this.page.total = res.total
       this.timeFormData(res.rows)
-      this.$emit('update:tableData', res.rows)
       this.tableData = res.rows
       const txt = `共 ${res.total} 条数据`
       this.$emit('update:txt', txt)
+      this.$emit('update:total', res.total)
     },
     // ^--- 切换分页
     handleCurrentChange(num) {
@@ -183,6 +190,19 @@ export default {
     // ^---时间格式转换
     formatTimeOfEntry(row, column, cellValue, index) {
       return enumeration.timeOfEntry(cellValue)
+    },
+    // ^--- 展示二维码
+    showQrCode(url) {
+      if (url) {
+        this.qecodeShow = true
+        this.$nextTick(() => QrCode.toCanvas(this.$refs['myQrCode'], url))
+      } else {
+        this.$notify({
+          type: 'warning',
+          duration: 1000,
+          message: '该用户未上传头像，当前使用的为默认头像!'
+        })
+      }
     }
   }
 }

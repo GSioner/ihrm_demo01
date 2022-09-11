@@ -16,7 +16,7 @@
               <el-input v-model="ruleForm.username" type="info" />
             </el-form-item>
             <el-form-item label="密码" prop="password">
-              <el-input v-model="ruleForm.password" type="password" />
+              <el-input v-model="ruleForm.password2" type="password" />
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="submitForm">更新</el-button>
@@ -25,15 +25,18 @@
         </el-tab-pane>
 
         <el-tab-pane label="个人详情" name="second">
-          <PersonalInfo :staff-data="ruleForm" :personal-data="pesonalData" />
+          <PersonalInfo />
         </el-tab-pane>
-        <el-tab-pane label="岗位信息" name="third">岗位信息</el-tab-pane>
+        <el-tab-pane label="岗位信息" name="third">
+          <JobInfo />
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
 </template>
 <script>
 import PersonalInfo from './PersonalInfomation.vue'
+import JobInfo from './JobInfo.vue'
 import {
   getStaffInfomation,
   editStaffInfo,
@@ -41,14 +44,15 @@ import {
 } from '@/api/employees'
 export default {
   components: {
-    PersonalInfo
+    PersonalInfo,
+    JobInfo
   },
   data() {
     return {
       activeName: 'first',
       ruleForm: {
         username: '',
-        password: ''
+        password2: ''
       },
       rules: {
         username: [
@@ -71,12 +75,17 @@ export default {
   },
   methods: {
     async submitForm() {
-      try {
-        await editStaffInfo(this.$route.params.id, this.ruleForm)
-        this.$message.success('更新成功!')
-      } catch (err) {
-        this.$message.warning(err)
-      }
+      this.$refs['ruleForm']
+        .validate()
+        .then(async() => {
+          this.ruleForm.password = this.ruleForm.password2
+          await editStaffInfo(this.$route.params.id, {
+            ...this.ruleForm,
+            password: this.ruleForm.password2
+          })
+          this.$message.success('更新成功!')
+        })
+        .catch((err) => this.$message.warning(err))
     }
   }
 }

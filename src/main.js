@@ -17,6 +17,8 @@ import '@/permission' // permission control
 
 import 'element-ui/lib/theme-chalk/display.css'
 
+import Print from 'vue-print-nb'
+
 // ^ --- 批量注册自定义指令
 import * as customCode from '@/directives'
 Object.keys(customCode).forEach(key => {
@@ -43,6 +45,7 @@ import Components from '@/components'
 // 如果想要中文版 element-ui，按如下方式声明
 Vue.use(ElementUI)
 Vue.use(Components)
+Vue.use(Print)
 
 Vue.config.productionTip = false
 

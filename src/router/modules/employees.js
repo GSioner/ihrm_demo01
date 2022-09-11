@@ -13,8 +13,14 @@ export default {
     },
     {
       path: 'detail/:id',
-      name: 'employeesInfo',
+      name: 'EmployeesInfo',
       component: () => import('@/views/employees/components/StaffInfo/index'),
+      hidden: true
+    },
+    {
+      path: 'printer/:id',
+      name: 'EmployeesPrinter',
+      component: () => import('@/views/employees/components/StaffInfo/PrinterPage'),
       hidden: true
     }
   ]

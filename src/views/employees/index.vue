@@ -7,32 +7,38 @@
           <el-button
             size="mini"
             type="danger"
-            @click="jsonToExcel"
+            @click="jsonToMultiExcel([], [])"
           >普通excel导出</el-button>
-          <el-button size="mini" type="info">复杂表头excel导出</el-button>
+          <el-button
+            size="mini"
+            type="info"
+            @click="jsonToMultiExcel()"
+          >复杂表头excel导出</el-button>
           <el-button
             size="mini"
             type="success"
-            @click="toImport"
+            @click="$router.push('/import')"
           >excel导入</el-button>
           <el-button
             size="mini"
             type="primary"
-            @click="addStaff"
+            @click="addStaffShow = true"
           >新增员工</el-button>
         </template>
       </ToolsBar>
-      <StaffTable :txt.sync="txt" :table-data.sync="tableData" />
+      <StaffTable :txt.sync="txt" :total.sync="total" />
     </div>
 
     <!-- 新增员工弹窗 -->
-    <AddStaff :show="addStaffShow" @changeAddStaffShow="changeAddStaffShow" />
+    <AddStaff :show="addStaffShow" :add-staff-show.sync="addStaffShow" />
   </div>
 </template>
 
 <script>
 import StaffTable from './components/StaffTable.vue'
 import AddStaff from './components/AddStaff.vue'
+import enumeration from '@/api/employees/enumeration.js'
+import { getStaffInfo } from '@/api/employees.js'
 export default {
   components: {
     StaffTable,
@@ -42,24 +48,25 @@ export default {
     return {
       txt: '暂无数据',
       addStaffShow: false,
-      tableData: []
+      tableData: [],
+      total: 10
+    }
+  },
+  watch: {
+    total() {
+      this.getData()
     }
   },
   methods: {
-    // ^---新增员工
-    addStaff() {
-      this.addStaffShow = true
+    async getData() {
+      this.tableData = await getStaffInfo({ page: 1, size: 50 }) // 数据过大，暂且提取50个数据
+      this.tableData['rows'].forEach((item) => {
+        item.correctionTime = enumeration.timeOfEntry(item.correctionTime)
+        item.timeOfEntry = enumeration.timeOfEntry(item.timeOfEntry)
+      })
     },
-    // ^---新增员工显隐
-    changeAddStaffShow(bool) {
-      this.addStaffShow = bool
-    },
-    // ^---跳转至上传模块
-    toImport() {
-      this.$router.push('/import')
-    },
-    // ^---Excel导出
-    jsonToExcel() {
+    // ^---复杂表头Excel导出
+    jsonToMultiExcel(multi = '', merge = '') {
       const staffInfo = {
         username: '姓名',
         id: '员工ID',
@@ -73,27 +80,27 @@ export default {
         staffPhoto: '头像',
         departmentName: '部门'
       }
-      const data = {} // 准备主数据变量
-      data.filename = '员工信息表' // 导出文件名
-      data.multiHeader = [['姓名', '主要信息', '', '', '', '', '', '', '', '', '部门']] // 复杂表头
-      data.merges = ['A1:A2', 'B1:J1', 'K1:K2'] // 合并表头
-      // TODO:转录英文表头为中文
-      data.header = Object.values(staffInfo)
-      // TODO:利用map将data数据转录为[[], []]的规定格式
-      data.data = this.tableData.map((item) => {
-        // TODO:转录账户状态为可读数据
-        item['enableState'] = item['enableState'] ? '激活' : '未激活'
-        // TODO:转录聘用形式为可读数据
+      const data = {} //  准备主数据变量
+      data.filename = '员工信息表' //  导出文件名
+      data.multiHeader = multi || [
+        ['姓名', '主要信息', '', '', '', '', '', '', '', '', '部门']
+      ] //  复杂表头
+      data.merges = merge || ['A1:A2', 'B1:J1', 'K1:K2'] //  合并表头
+      data.header = Object.values(staffInfo) // 转录英文表头为中文
+      // 利用map将data数据转录为[[], []]的规定格式
+      data.data = this.tableData['rows'].map((item) => {
+        item['enableState'] = item['enableState'] ? '激活' : '未激活' // 转录账户状态为可读数据
+        // 转录聘用形式为可读数据
         if (+item['formOfEmployment'] === 1) {
           item['formOfEmployment'] = '正式'
         } else if (+item['formOfEmployment'] === 2) {
           item['formOfEmployment'] = '非正式'
         }
-        // TODO:获取data数据内的每一个员工数据
-        return Object.keys(staffInfo).map((k) => item[k])
+        return Object.keys(staffInfo).map((k) => item[k]) // 根据staffInfo数据顺序获取data数据内的每一个员工数据
       })
-      // TODO:导出Excel
-      import('@/vendor/Export2Excel').then((excel) => excel.export_json_to_excel(data))
+      import('@/vendor/Export2Excel').then((excel) =>
+        excel.export_json_to_excel(data)
+      ) // 导出Excel
     }
   }
 }

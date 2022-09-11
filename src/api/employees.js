@@ -40,17 +40,10 @@ export const getStaffInfomation = (id) => {
   })
 }
 
-// ^--- 获取员工个人信息
-export const getStaffPersonalInfo = id => {
+// ^--- 获取员工简单列表
+export const getStaffSimpleInfo = () => {
   return request({
-    url: `/employees/${id}/personalInfo`
-  })
-}
-
-// ^--- 获取员工岗位信息
-export const getStaffJobInfo = id => {
-  return request({
-    url: `/employees/${id}/jobs`
+    url: '/sys/user/simple'
   })
 }
 
@@ -58,6 +51,29 @@ export const getStaffJobInfo = id => {
 export const editStaffInfo = (id, data) => {
   return request({
     url: `/sys/user/${id}`,
+    method: 'PUT',
+    data
+  })
+}
+
+// ^--- 获取员工个人信息
+export const getStaffPersonalInfo = (id) => {
+  return request({
+    url: `/employees/${id}/personalInfo`
+  })
+}
+
+// ^--- 获取员工岗位信息
+export const getStaffJobInfo = (id) => {
+  return request({
+    url: `/employees/${id}/jobs`
+  })
+}
+
+// ^--- 保存员工岗位信息
+export const editStaffJobInfo = (id, data) => {
+  return request({
+    url: `/employees/${id}/jobs`,
     method: 'PUT',
     data
   })

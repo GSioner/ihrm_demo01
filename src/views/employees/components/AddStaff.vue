@@ -155,14 +155,14 @@ export default {
           if (isOk) {
             this.editData(this.form) // TODO:form数据格式规范修正
             await addNewStaffInfo(this.form) // TODO:发送请求
-            this.$emit('changeAddStaffShow', false)
+            this.$emit('update:addStaffShow', false)
             this.$message.success('员工新增成功')
           } else {
             return false
           }
         })
       } else {
-        this.$emit('changeAddStaffShow', false)
+        this.$emit('update:addStaffShow', false)
       }
     },
     // ^---编译数据为请求规范格式数据
