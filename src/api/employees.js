@@ -78,3 +78,12 @@ export const editStaffJobInfo = (id, data) => {
     data
   })
 }
+
+// ^--- 分配员工角色
+export const assignmentStaffRole = data => {
+  return request({
+    url: '/sys/user/assignRoles',
+    method: 'PUT',
+    data
+  })
+}

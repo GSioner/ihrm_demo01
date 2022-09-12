@@ -14,7 +14,7 @@
       </div>
       <div>
         <slot name="button">
-          <el-button type="primary" size="mini">主要按钮</el-button>
+          <el-button type="primary" size="mini" @click="rightClick">{{ rightTxt }}</el-button>
         </slot>
       </div>
     </div>
@@ -27,6 +27,15 @@ export default {
     txt: {
       type: String,
       default: '消息提示'
+    },
+    rightTxt: {
+      type: String,
+      default: '主要按钮'
+    }
+  },
+  methods: {
+    rightClick() {
+      this.$emit('rightClick')
     }
   }
 }

@@ -7,7 +7,7 @@ export const getCompanyInfoSetting = () => {
   })
 }
 
-// 获取员工信息
+// 获取角色信息
 export const getRole = (params) => {
   return request({
     url: '/sys/role',
@@ -15,7 +15,7 @@ export const getRole = (params) => {
   })
 }
 
-// 提交员工权限
+// 提交角色权限
 export const getPromission = data => {
   return request({
     url: '/sys/role/assignPrem',

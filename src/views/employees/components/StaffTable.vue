@@ -14,13 +14,14 @@
         <el-table-column prop="username" label="姓名" width="160" sortable />
 
         <!-- 头像 -->
-        <el-table-column
-          align="center"
-          label="头像"
-          min-width
-        >
+        <el-table-column align="center" label="头像" min-width>
           <template slot-scope="scope">
-            <img v-imgerror="errImg" :src="scope.row.staffPhoto" class="img" @click="showQrCode(scope.row.staffPhoto)">
+            <img
+              v-imgerror="errImg"
+              :src="scope.row.staffPhoto"
+              class="img"
+              @click="showQrCode(scope.row.staffPhoto)"
+            >
           </template>
         </el-table-column>
 
@@ -81,7 +82,7 @@
             >离职</el-button>
             <el-button
               type="text"
-              @click="handleClick(scope.row, 'permission')"
+              @click="handleClick(scope.row, 'role')"
             >角色</el-button>
             <el-button
               type="text"
@@ -110,12 +111,36 @@
         <canvas ref="myQrCode" />
       </el-row>
     </el-dialog>
+
+    <!-- 角色弹窗 -->
+    <el-dialog :visible.sync="roleShow" title="分配角色" @close="checkList = []">
+      <el-row type="flex" align="center">
+        <el-checkbox
+          v-for="k in roleList"
+          :key="k.name"
+          v-model="checkList"
+          :label="k.id"
+        >{{ k.name }}</el-checkbox>
+      </el-row>
+      <el-row type="flex" justify="center">
+        <span class="dialog-footer">
+          <el-button type="primary" @click="saveRole">确 定</el-button>
+          <el-button @click="roleShow = false">取 消</el-button>
+        </span>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import enumeration from '@/api/employees/enumeration.js'
-import { getStaffInfo, deleteStaffInfo } from '@/api/employees.js'
+import {
+  getStaffInfo,
+  deleteStaffInfo,
+  assignmentStaffRole,
+  getStaffInfomation
+} from '@/api/employees.js'
+import { getRole } from '@/api/setting.js'
 import QrCode from 'qrcode'
 export default {
   data() {
@@ -128,11 +153,16 @@ export default {
       },
       errImg: require('@/assets/common/head.jpg'),
       rander: true,
-      qecodeShow: false
+      qecodeShow: false,
+      roleShow: false,
+      checkList: [],
+      roleList: [],
+      uid: ''
     }
   },
   created() {
     this.getStaffInfo()
+    this.getRoleInfo()
   },
   methods: {
     // ^--- 获取点击的操作类型数据
@@ -151,6 +181,17 @@ export default {
         // TODO:查看员工详细数据
         this.$router.push(`/employees/detail/${row.id}`)
         localStorage.setItem('staffImg', row.staffPhoto)
+      } else if (type === 'role') {
+        // TODO:分配权限角色
+        const { roleIds } = await getStaffInfomation(row.id)
+        const type = Object.prototype.toString.call(roleIds).slice(8, -1)
+        if (type === 'Object') {
+          this.checkList = roleIds.map((item) => item.id)
+        } else if (type === 'Array') {
+          this.checkList = roleIds
+        }
+        this.uid = row.id
+        this.roleShow = true
       }
     },
     // ^--- 获取员工数据列表
@@ -203,6 +244,24 @@ export default {
           message: '该用户未上传头像，当前使用的为默认头像!'
         })
       }
+    },
+    // ^--- 保存角色
+    async saveRole() {
+      const data = { id: this.uid, roleIds: [] }
+      if (this.checkList.length && Array.isArray(this.checkList)) {
+        data.roleIds = this.checkList
+        this.$message.success('员工角色分配成功')
+      } else {
+        this.$message.warning('数据异常，将重置当前角色数据')
+        this.checkList = []
+      }
+      await assignmentStaffRole(data)
+      this.roleShow = false
+    },
+    // ^--- 获取所有角色列表/员工角色列表
+    async getRoleInfo() {
+      const { rows } = await getRole({ page: 1, pagesize: 100 })
+      this.roleList = rows
     }
   }
 }
