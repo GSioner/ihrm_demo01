@@ -9,7 +9,6 @@
       <!-- 权限表格 -->
       <el-card style="margin-top: 10px">
         <el-table
-          v-if="rander"
           :data="permisForm"
           style="width: 100%"
           highlight-current-row
@@ -103,7 +102,6 @@ export default {
     async activeEdit(id) {
       this.detailInfo = await getPermissionInfo(id)
       this.permission = await getAllPermission()
-      this.detailInfo.enVisible = !!this.detailInfo.enVisible
       this.show = true
       this.type = 'edit'
     },
@@ -118,9 +116,7 @@ export default {
     },
     // ^--- 重渲染
     reRander() {
-      this.rander = false
       this.getAllPermission()
-      setTimeout(() => (this.rander = true), 0)
     }
   }
 }

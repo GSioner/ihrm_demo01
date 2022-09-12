@@ -12,7 +12,7 @@
           <el-input v-model="detailList.description" />
         </el-form-item>
         <el-form-item label="开启">
-          <el-switch v-model="detailList.enVisible" disabled />
+          <el-switch v-model="detailList.enVisible" active-value="1" inactive-value="0" />
         </el-form-item>
         <el-form-item>
           <el-row type="flex" justify="center">
@@ -89,6 +89,13 @@ export default {
         this.detailList = {}
         this.detailList.pid = this.pid
       }
+    },
+    data() {
+      if (this.type === 'edit') {
+        this.detailList = { ...this.data }
+      } else if (this.type === 'add') {
+        this.detailList = {}
+      }
     }
   },
   methods: {
@@ -118,15 +125,18 @@ export default {
       return i === -1
     },
     async saveData() {
-      if (this.type === 'edit') {
-        await editPermission(this.detailList)
-        this.$message.success('权限修改成功!')
-      } else if (this.type === 'add') {
-        await addNewPermission(this.detailList)
-      }
-      this.$emit('update:show', false)
-      this.$emit('reRander')
-      this.$message.success('权限添加成功!')
+      this.$refs.form.validate().then(async() => {
+        if (this.type === 'edit') {
+          await editPermission(this.detailList)
+          this.$message.success('权限修改成功!')
+        } else if (this.type === 'add') {
+          await addNewPermission(this.detailList)
+          this.$message.success('权限添加成功!')
+        }
+        this.$emit('update:show', false)
+        this.detailList = {}
+        this.$emit('reRander')
+      })
     }
   }
 }
