@@ -1,5 +1,6 @@
 import { login, getInfo, getStaffInfo } from '@/api/user.js'
 import { setToken, getToken, removeToken, setTimeStamp } from '@/utils/auth.js'
+import { resetRouter } from '@/router'
 
 export default {
   namespaced: true,
@@ -46,6 +47,8 @@ export default {
     logoout(action) {
       action.commit('REMOVE_USER_TOKEN')
       action.commit('REMOVE_USER_INFAMATION')
+      resetRouter()
+      action.commit('permission/SET_ROUTES', [], { root: true })
     }
   }
 }

@@ -19,6 +19,8 @@ import 'element-ui/lib/theme-chalk/display.css'
 
 import Print from 'vue-print-nb'
 
+import checkPermission from './mixin/checkPermission'
+
 // ^ --- 批量注册自定义指令
 import * as customCode from '@/directives'
 Object.keys(customCode).forEach(key => {
@@ -46,6 +48,7 @@ import Components from '@/components'
 Vue.use(ElementUI)
 Vue.use(Components)
 Vue.use(Print)
+Vue.mixin(checkPermission)
 
 Vue.config.productionTip = false
 

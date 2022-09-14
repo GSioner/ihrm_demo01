@@ -32,16 +32,19 @@
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item
+            :disabled="!checkPermission('point_add_depts')"
             style="color: #437dff"
             command="add"
           >添加子部</el-dropdown-item>
           <el-dropdown-item
             v-if="!data.isHost"
+            :disabled="!checkPermission('point_edit_depts')"
             style="color: #437dff"
             command="edit"
           >编辑子部</el-dropdown-item>
           <el-dropdown-item
             v-if="!data.isHost"
+            :disabled="!checkPermission('point_delete_depts')"
             style="color: #437dff"
             command="del"
           >删除子部</el-dropdown-item>
@@ -215,9 +218,11 @@ export default {
         )
         isTrue = arr.length
       } else if (this.type === 'edit') {
-        isTrue = res.filter(
-          (item) => item.id !== this.data.id && item.pid === this.data.pid
-        ).some(item => item.name === value)
+        isTrue = res
+          .filter(
+            (item) => item.id !== this.data.id && item.pid === this.data.pid
+          )
+          .some((item) => item.name === value)
       }
       isTrue ? callback(new Error('当前已存在该部门')) : callback()
     },

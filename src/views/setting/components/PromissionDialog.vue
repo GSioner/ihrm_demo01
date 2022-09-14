@@ -4,6 +4,7 @@
     <el-dialog title="分配权限" :visible.sync="promissionShow">
       <!-- 权限树 -->
       <el-tree
+        check-strictly
         :data="perList"
         show-checkbox
         node-key="perid"

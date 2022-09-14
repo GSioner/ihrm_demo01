@@ -81,6 +81,15 @@ export default {
   },
   watch: {
     type() {
+      this.layData()
+    },
+    data() {
+      this.layData()
+    }
+  },
+  methods: {
+    // ^--- 铺设数据
+    layData() {
       if (this.type === 'edit') {
         this.dialogName = '编辑权限'
         this.detailList = { ...this.data }
@@ -90,15 +99,7 @@ export default {
         this.detailList.pid = this.pid
       }
     },
-    data() {
-      if (this.type === 'edit') {
-        this.detailList = { ...this.data }
-      } else if (this.type === 'add') {
-        this.detailList = {}
-      }
-    }
-  },
-  methods: {
+    // ^--- 验证权限名称可行性，以及判断是否为左侧主权限
     verifyName(rule, value, callback) {
       let bool = false
       if (this.type === 'add') {
@@ -109,6 +110,7 @@ export default {
       }
       bool ? callback() : callback(new Error('当前名称已存在于同部门中，请重新修改!'))
     },
+    // ^--- 验证权限编码可行性，以及判断是否为左侧主权限
     verifyCode(rule, value, callback) {
       let bool = false
       if (this.type === 'add') {
@@ -119,11 +121,13 @@ export default {
       }
       bool ? callback() : callback(new Error('当前标识已存在，请重新修改!'))
     },
+    // ^--- 验证权限是否为左侧主要权限
     verify() {
       if ('/' + this.data.code === '/import') return true
       const i = routerRule.findIndex((item) => item.path === '/' + this.data.code)
       return i === -1
     },
+    // ^--- 保存(添加/编辑)数据
     async saveData() {
       this.$refs.form.validate().then(async() => {
         if (this.type === 'edit') {
@@ -145,5 +149,8 @@ export default {
 <style lang="scss" scoped>
 ::v-deep .el-input__inner{
   width: 700px;
+}
+::v-deep .el-form-item__error{
+  color: red;
 }
 </style>
