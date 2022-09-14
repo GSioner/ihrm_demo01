@@ -9,7 +9,10 @@
           </div>
           <div class="headInfoTip">
             <p class="firstChild">早安，{{ name }}，祝你开心每一天！</p>
-            <p class="lastChild">{{ name }} | {{ userInfo.company }} - {{ userInfo.departmentName }}</p>
+            <p class="lastChild">
+              {{ name }} | {{ userInfo.company }} -
+              {{ userInfo.departmentName }}
+            </p>
           </div>
         </div>
         <div class="fr" />
@@ -81,7 +84,10 @@
             <span>流程申请</span>
           </div>
           <div class="sideNav">
-            <el-button class="sideBtn">加班离职</el-button>
+            <el-button
+              class="sideBtn"
+              @click="dialogShow = true"
+            >加班离职</el-button>
             <el-button class="sideBtn">请假调休</el-button>
             <el-button class="sideBtn">审批列表</el-button>
             <el-button class="sideBtn">我的信息</el-button>
@@ -126,6 +132,27 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 离职弹窗 -->
+    <el-dialog :visible.sync="dialogShow" title="离职申请" @close="onClose">
+      <el-form
+        ref="except"
+        label-width="120px"
+        :model="ruleForm"
+        :rules="rules"
+      >
+        <el-form-item label="期望离职时间" prop="exceptTime">
+          <el-date-picker v-model="ruleForm.exceptTime" type="datetime" />
+        </el-form-item>
+        <el-form-item label="离职原因" style="width: 70%" prop="reason">
+          <el-input v-model="ruleForm.reason" type="textarea" :rows="3" />
+        </el-form-item>
+        <el-row type="flex" justify="center">
+          <el-button type="primary" size="small" @click="btnOk">确认</el-button>
+          <el-button size="small" @click="dialogShow = false">取消</el-button>
+        </el-row>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -135,6 +162,7 @@ const { mapState } = createNamespacedHelpers('user')
 import img from '@/assets/common/head.jpg'
 import calendar from './components/calendar.vue'
 import performance from './components/performance.vue'
+import { startProcess } from '@/api/approvals.js'
 
 export default {
   name: 'Dashboard',
@@ -144,12 +172,45 @@ export default {
   },
   data() {
     return {
-      errImg: img
+      errImg: img,
+      dialogShow: false,
+      ruleForm: {
+        exceptTime: '',
+        reason: '',
+        processKey: 'process_dimission',
+        processName: '离职'
+      },
+      rules: {
+        exceptTime: [
+          { required: true, trigger: 'blur', message: '离职时间不能为空' }
+        ],
+        reason: [
+          { required: true, trigger: 'blur', message: '离职时间不能为空' },
+          { min: 6, max: 250, trigger: 'blur', message: '请输入6-300个字符' }
+        ]
+      }
     }
   },
   computed: {
     ...mapGetters(['name', 'userImg']),
     ...mapState(['userInfo'])
+  },
+  methods: {
+    onClose() {
+      this.ruleForm = {
+        exceptTime: '',
+        reason: '',
+        processKey: 'process_dimission',
+        processName: '离职'
+      }
+    },
+    async btnOk() {
+      this.dialogShow = false
+      await this.$refs.except.validate()
+      await startProcess({ ...this.ruleForm, userId: this.userInfo.userId, username: this.userInfo.username })
+      this.$message.success('离职申请已提交!')
+      this.$router.push('/approvals')
+    }
   }
 }
 </script>
