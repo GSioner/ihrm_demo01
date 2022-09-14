@@ -13,6 +13,7 @@
     </div>
 
     <div class="right-menu">
+      <screen-full class="right-menu-item" />
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img v-imgerror="redirectImg" :src="userImg" class="user-avatar">
@@ -121,6 +122,7 @@ $color: white;
   }
 
   .right-menu {
+    display: flex;
     float: right;
     height: 100%;
     line-height: 50px;
@@ -131,6 +133,7 @@ $color: white;
     }
 
     .right-menu-item {
+      color: white;
       display: inline-block;
       padding: 0 8px;
       height: 100%;
