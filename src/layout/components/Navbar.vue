@@ -13,10 +13,11 @@
     </div>
 
     <div class="right-menu">
-      <el-row type="flex" align="center">
-        <el-color-picker size="mini" class="right-menu-item" style="" />
-      </el-row>
+      <lang-selector />
       <screen-full class="right-menu-item" />
+      <span class="colorpicker" style="margin: 0 10px;">
+        <color-picker style="margin-top: 10px" />
+      </span>
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
           <img v-imgerror="redirectImg" :src="userImg" class="user-avatar">
@@ -130,6 +131,7 @@ $color: white;
     height: 100%;
     line-height: 50px;
     box-sizing: border-box;
+    justify-content: space-between;
 
     &:focus {
       outline: none;
@@ -142,7 +144,7 @@ $color: white;
       height: 100%;
       font-size: 18px;
       color: #5a5e66;
-      vertical-align: text-bottom;
+      vertical-align: middle;
 
       &.hover-effect {
         cursor: pointer;
@@ -157,7 +159,7 @@ $color: white;
     .avatar-container {
       display: inline-block;
       padding-right: 30px;
-      width: 110%;
+      width: 150px;
 
       .right-menu-type {
         display: block;
@@ -191,5 +193,11 @@ $color: white;
       }
     }
   }
+}
+
+.colorpicker{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>

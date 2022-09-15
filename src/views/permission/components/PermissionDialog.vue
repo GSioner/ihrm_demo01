@@ -134,6 +134,7 @@ export default {
           await editPermission(this.detailList)
           this.$message.success('权限修改成功!')
         } else if (this.type === 'add') {
+          this.detailList.type = this.detailList.pid === '0' ? 1 : 2
           await addNewPermission(this.detailList)
           this.$message.success('权限添加成功!')
         }

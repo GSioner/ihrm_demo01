@@ -3,6 +3,8 @@ import TagBar from './TagBar'
 import UpdateExcel from './UpdateExcel'
 import ImageLoad from './ImageLoad'
 import ScreenFull from './ScreenFull'
+import ColorPicker from './ColorPicker'
+import LangSelector from './Lang'
 
 export default {
   install(Vue) {
@@ -11,5 +13,7 @@ export default {
     Vue.component('UpdateExcel', UpdateExcel)
     Vue.component('ImageLoad', ImageLoad)
     Vue.component('ScreenFull', ScreenFull)
+    Vue.component('ColorPicker', ColorPicker)
+    Vue.component('LangSelector', LangSelector)
   }
 }
