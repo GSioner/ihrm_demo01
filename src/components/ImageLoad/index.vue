@@ -31,11 +31,6 @@
 </template>
 
 <script>
-import COS from 'cos-js-sdk-v5'
-const cos = new COS({
-  SecretId: 'AKIDRijTwA6l9G7gyzjCOJyOXPzJM8cqnVw7',
-  SecretKey: 'vZw2sQhhJirjLgkX3h4B1astd7KGvKSJ'
-})
 export default {
   props: {
     showDouble: {
@@ -89,38 +84,38 @@ export default {
     // ^--- 上传时调用的接口地址,并在成功上传后触发成功上传事件
     httpRequest(content) {
       // console.log('http', content)
-      if (content.file) {
-        const { file } = content
-        cos.putObject(
-          {
-            Bucket: 'photo-1252330056' /* 填入您自己的存储桶，必须字段 */,
-            Region: 'ap-nanjing' /* 存储桶所在地域，例如ap-beijing，必须字段 */,
-            Key: file.name /* 存储在桶里的对象键（例如1.jpg，a/b/test.txt），必须字段 */,
-            StorageClass: 'STANDARD',
-            Body: file, // 上传文件对象
-            onProgress: (data) => {
-              this.percent = (data.percent * 100).toFixed(0)
-              if (this.percent === 100) {
-                setTimeout(() => {
-                  this.progressShow = false
-                  this.percent = 0
-                }, 1000)
-              }
-            }
-          },
-          (err, data) => {
-            if (err) this.$message.error(err)
-            if (!err && data.statusCode === 200) {
-              this.$message.success('数据传输成功')
-              this.fileList = this.fileList.map((item) =>
-                item.uid === this.currentFileUid ? { url: 'http://' + data.Location, upload: true } : item
-              )
-              // console.log(this.fileList)
-            }
-            console.log('data', data)
-          }
-        )
-      }
+      // if (content.file) {
+      //   const { file } = content
+      //   cos.putObject(
+      //     {
+      //       Bucket: 'photo-1252330056' /* 填入您自己的存储桶，必须字段 */,
+      //       Region: 'ap-nanjing' /* 存储桶所在地域，例如ap-beijing，必须字段 */,
+      //       Key: file.name /* 存储在桶里的对象键（例如1.jpg，a/b/test.txt），必须字段 */,
+      //       StorageClass: 'STANDARD',
+      //       Body: file, // 上传文件对象
+      //       onProgress: (data) => {
+      //         this.percent = (data.percent * 100).toFixed(0)
+      //         if (this.percent === 100) {
+      //           setTimeout(() => {
+      //             this.progressShow = false
+      //             this.percent = 0
+      //           }, 1000)
+      //         }
+      //       }
+      //     },
+      //     (err, data) => {
+      //       if (err) this.$message.error(err)
+      //       if (!err && data.statusCode === 200) {
+      //         this.$message.success('数据传输成功')
+      //         this.fileList = this.fileList.map((item) =>
+      //           item.uid === this.currentFileUid ? { url: 'http://' + data.Location, upload: true } : item
+      //         )
+      //         // console.log(this.fileList)
+      //       }
+      //       console.log('data', data)
+      //     }
+      //   )
+      // }
       content.onSuccess()
     },
     // ^--- 上传成功将文件url路径保存并赋值
