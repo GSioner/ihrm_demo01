@@ -1,39 +1,39 @@
 export default [
   {
     path: '/dashboard',
-    name: '首页'
+    name: 'dashboard'
   },
   {
     path: '/approvals',
-    name: '审批'
+    name: 'approvals'
   },
   {
     path: '/attendances',
-    name: '考勤'
+    name: 'attendances'
   },
   {
     path: '/departments',
-    name: '组织架构'
+    name: 'departments'
   },
   {
     path: '/employees',
-    name: '员工管理'
+    name: 'employees'
   },
   {
     path: '/permission',
-    name: '权限管理'
+    name: 'permissions'
   },
   {
     path: '/salarys',
-    name: '工资'
+    name: 'salarys'
   },
   {
     path: '/setting',
-    name: '公司设置'
+    name: 'settings'
   },
   {
     path: '/social',
-    name: '社保'
+    name: 'social_securitys'
   },
   {
     path: '/import',

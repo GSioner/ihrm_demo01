@@ -11,7 +11,7 @@
       @click="handlerClick(tag)"
       @close="handleClose(tag)"
     >
-      {{ tag.name }}
+      {{ $t('route.' + tag.name) }}
     </el-tag>
   </el-card>
 </template>
