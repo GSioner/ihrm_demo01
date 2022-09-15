@@ -13,7 +13,18 @@ export function getInformation(id) {
     url: `/user/process/instance/getById/${id}`
   })
 }
+// 获取审批信息
+export function information(id) {
+  return request({
+    url: `/user/process/instance/getById/${id}`
+  })
+}
 export function getReviewHistory(id) {
+  return request({
+    url: `/approvals/flows/${id}`
+  })
+}
+export function reviewHistory(id) {
   return request({
     url: `/approvals/flows/${id}`
   })

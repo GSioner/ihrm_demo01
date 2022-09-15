@@ -23,3 +23,9 @@ export const getStaffInfo = data => {
     url: `/sys/user/${data}`
   })
 }
+// ^ --- 获取员工信息
+export const getUserDetailById = data => {
+  return request({
+    url: `/sys/user/${data}`
+  })
+}

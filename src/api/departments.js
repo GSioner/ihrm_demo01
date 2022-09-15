@@ -6,6 +6,12 @@ export const getCompanyDeparts = () => {
     url: '/company/department'
   })
 }
+// 获取公司组织结构
+export const getDepartments = () => {
+  return request({
+    url: '/company/department'
+  })
+}
 
 // 获取公司负责人名单
 export const getCompanyUsername = () => {

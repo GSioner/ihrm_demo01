@@ -23,6 +23,14 @@ export const addNewStaffInfo = (data) => {
     data
   })
 }
+// ^--- 新增员工
+export const addEmployee = (data) => {
+  return request({
+    url: '/sys/user',
+    method: 'POST',
+    data
+  })
+}
 
 // ^--- 批量导入员工信息
 export const batchStaff = (data) => {

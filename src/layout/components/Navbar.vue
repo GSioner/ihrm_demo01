@@ -13,6 +13,9 @@
     </div>
 
     <div class="right-menu">
+      <el-row type="flex" align="center">
+        <el-color-picker size="mini" class="right-menu-item" style="" />
+      </el-row>
       <screen-full class="right-menu-item" />
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">

@@ -20,6 +20,7 @@ import 'element-ui/lib/theme-chalk/display.css'
 import Print from 'vue-print-nb'
 
 import checkPermission from './mixin/checkPermission'
+import { LegendComponent } from 'echarts/components'
 
 // ^ --- 批量注册自定义指令
 import * as customCode from '@/directives'
@@ -49,6 +50,7 @@ Vue.use(ElementUI)
 Vue.use(Components)
 Vue.use(Print)
 Vue.mixin(checkPermission)
+Vue.use(LegendComponent)
 
 Vue.config.productionTip = false
 
