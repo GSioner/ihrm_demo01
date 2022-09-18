@@ -33,6 +33,7 @@
     "xlsx": "^0.16.9"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^1.1.1",
     "@vue/cli-plugin-babel": "4.4.4",
     "@vue/cli-plugin-eslint": "4.4.4",
     "@vue/cli-plugin-unit-jest": "4.4.4",
